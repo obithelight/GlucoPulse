@@ -10,6 +10,40 @@ GlucoPulse is a modern, responsive, and feature-rich blood sugar monitoring appl
 
 Built entirely with standard **HTML5**, **Vanilla CSS**, and **ES6 JavaScript**, it provides real-time glucose tracking, insulin and carbohydrate counting, medication logs, A1C estimations, Time-in-Range (TIR %) visual metrics, and interactive canvas analytics — storing all patient data securely and persistently in browser `localStorage`.
 
+## The problem
+Tracking blood sugar on paper logbooks or relying on memory easily leads to lost entries, missed pattern trends, and inaccurate recollections during doctor visits. Without visual trends or calculated metrics like Time in Range, patients struggle to recognize post-meal spikes or early hypoglycemia risks.
+
+> *"Keeping track of my readings on paper got messy, and most mobile apps forced me to create accounts just to save a daily blood sugar entry."*
+
+## Who it's for
+Adults living with Type 1 or Type 2 diabetes who check their blood sugar at home with a glucometer and want an instant, private digital record to review and share with their doctor.
+
+## Decisions I made and why
+1. **Browser storage instead of a database with accounts.**  
+   Chosen because health data should remain 100% private on the user's device without requiring sign-ups or account registration. Alternative: a server with logins.  
+   Trade-off: data stays on one device, and clearing the browser deletes it. That is why I added JSON backup and CSV export.
+2. **One app for both Type 1 and Type 2.**  
+   Diabetic patients often find apps tailored strictly to one condition. Combining insulin & carb tracking for T1D and medication & exercise tags for T2D makes the app versatile for everyone without cluttering the UI.
+3. **mg/dL and mmol/L both supported.**  
+   Diabetic patients use different standard units depending on their region (`mg/dL` in the US vs `mmol/L` globally). Instant unit toggling allows international usability without manual math.
+4. **Plain HTML, CSS and JavaScript, no frameworks.**  
+   Simple, lightweight, zero build tooling overhead, zero heavy framework dependencies (No React, No Tailwind), and deploys in seconds.
+5. **A disclaimer and no dosing advice.**  
+   The app tracks and informs. It does not advise or give medical recommendations, because medical dosing requires clinical diagnosis and personal endocrinologist supervision.
+
+## Known limitations
+- Data lives on one device and browser only
+- Not encrypted
+- No accounts or syncing across devices
+- Manual log entry (no direct Bluetooth Sync with continuous glucose monitors / CGMs yet)
+
+## What's next
+- Downloadable PDF report for doctor visits
+- Test with real users
+- Automated post-meal (2-hour after meal) recheck reminder notifications
+
+---
+
 ## ✨ Features
 
 - **🩸 Dual Glucose Unit Support**: Switch seamlessly between `mg/dL` (US standard) and `mmol/L` (UK/Global standard) with automatic conversion.
@@ -42,12 +76,10 @@ Built entirely with standard **HTML5**, **Vanilla CSS**, and **ES6 JavaScript**,
    ```bash
    git clone https://github.com/obithelight/GlucoPulse.git
    ```
-2. Open `index.html` in any web browser. No npm install or server build step required!
+2. Open `index.html` in any web browser. No `npm install` or server build step required!
 
 ---
 
-## 🔒 Privacy & Medical Disclaimer
+## 🔒 Medical Disclaimer
 
-All data is stored exclusively in your browser's local storage (`localStorage`). No personal medical data is transmitted to external servers.
-
-*Medical Disclaimer: This application is intended for self-tracking purposes only. Consult your endocrinologist or healthcare provider for clinical medical advice or personal insulin dosing adjustments.*
+*This application is for tracking and informational purposes only. It does not provide medical advice, diagnosis, or treatment recommendations. Always consult your doctor or endocrinologist before adjusting your medication or insulin dosages.*
