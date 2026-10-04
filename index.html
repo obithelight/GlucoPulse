@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GlucoPulse | Smart Blood Sugar Monitor for Type 1 & 2 Diabetes</title>
+  <meta name="description" content="A modern, intuitive blood sugar and diabetes tracking application for Type 1 and Type 2 diabetic patients.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Navigation Header -->
+    <header class="navbar">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>GlucoPulse</h1>
+          <span class="brand-subtitle">Diabetes Care Log</span>
+        </div>
+      </div>
+
+      <div class="nav-controls">
+        <div class="unit-toggle-group">
+          <span class="toggle-label">Unit:</span>
+          <button id="unitMgDlBtn" class="unit-btn active" data-unit="mg/dL">mg/dL</button>
+          <button id="unitMmolBtn" class="unit-btn" data-unit="mmol/L">mmol/L</button>
+        </div>
+        <button id="themeSettingsBtn" class="icon-btn" title="Target Settings">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+        <button id="exportImportBtn" class="secondary-btn">Data Options</button>
+      </div>
+    </header>
+
+    <!-- Emergency / Low Glucose Alert Banner -->
+    <div id="hypoAlertBanner" class="alert-banner hypo-banner hidden">
+      <div class="alert-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+      </div>
+      <div class="alert-content">
+        <h4>Hypoglycemia Safety Alert (15-15 Rule)</h4>
+        <p id="hypoAlertMsg">Latest reading is low! Consume 15g of fast-acting carbs (e.g. 4 oz fruit juice, 3-4 glucose tablets) and re-check in 15 minutes.</p>
+      </div>
+      <button class="alert-dismiss" onclick="document.getElementById('hypoAlertBanner').classList.add('hidden')">&times;</button>
+    </div>
+
+    <!-- Health Key Insights Summary Dashboard Grid -->
+    <section class="summary-cards">
+      <div class="card summary-card">
+        <div class="card-icon blue-gradient">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+        </div>
+        <div class="card-info">
+          <span class="card-title">Average Glucose</span>
+          <div class="card-value-wrap">
+            <span id="avgGlucoseVal" class="card-value">--</span>
+            <span id="avgGlucoseUnit" class="card-unit">mg/dL</span>
+          </div>
+          <span id="avgGlucoseSub" class="card-status status-normal">Target: 70-130</span>
+        </div>
+      </div>
+
+      <div class="card summary-card">
+        <div class="card-icon purple-gradient">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 6v6l4 2"></path>
+          </svg>
+        </div>
+        <div class="card-info">
+          <span class="card-title">Estimated A1C (eAG)</span>
+          <div class="card-value-wrap">
+            <span id="estA1cVal" class="card-value">-- %</span>
+          </div>
+          <span id="estA1cSub" class="card-status status-normal">Based on recent logs</span>
+        </div>
+      </div>
+
+      <div class="card summary-card">
+        <div class="card-icon green-gradient">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+        <div class="card-info">
+          <span class="card-title">Time In Range (TIR)</span>
+          <div class="card-value-wrap">
+            <span id="tirVal" class="card-value">-- %</span>
+          </div>
+          <span id="tirSub" class="card-status">Target: &gt; 70%</span>
+        </div>
+      </div>
+
+      <div class="card summary-card">
+        <div class="card-icon orange-gradient">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 20h9"></path>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+          </svg>
+        </div>
+        <div class="card-info">
+          <span class="card-title">Total Logs</span>
+          <div class="card-value-wrap">
+            <span id="totalLogsVal" class="card-value">0</span>
+          </div>
+          <span id="lastLoggedSub" class="card-status">No recent logs</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Workspace Grid: Form + Chart -->
+    <div class="main-grid">
+      <!-- Left Column: Log Reading Form -->
+      <section class="card form-card">
+        <div class="card-header">
+          <h2>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            Log Glucose Reading
+          </h2>
+          <span class="type-badge" id="typeGuideTag">Type 1 & Type 2 Support</span>
+        </div>
+
+        <form id="glucoseForm" class="glucose-form">
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="glucoseInput">Blood Glucose Level *</label>
+              <div class="input-with-addon">
+                <input type="number" id="glucoseInput" step="0.1" min="0.5" max="600" placeholder="e.g. 110" required>
+                <span id="formUnitLabel" class="addon">mg/dL</span>
+              </div>
+            </div>
+
+            <div class="form-group flex-1">
+              <label for="timingSelect">Timing / Context *</label>
+              <select id="timingSelect" required>
+                <option value="Fasting">Fasting (Morning)</option>
+                <option value="Pre-Meal">Before Meal (Pre-Prandial)</option>
+                <option value="Post-Meal" selected>2h After Meal (Post-Prandial)</option>
+                <option value="Bedtime">Bedtime</option>
+                <option value="Overnight">Overnight (3 AM)</option>
+                <option value="Random">Random / Exercise</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Type 1 Specific Inputs (Insulin & Carbs) -->
+          <div class="form-section-title">
+            <span>Type 1 Diabetes Tracking (Insulin & Carbs)</span>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="carbsInput">Carbohydrates (grams)</label>
+              <input type="number" id="carbsInput" min="0" max="300" placeholder="e.g. 45">
+            </div>
+
+            <div class="form-group flex-1">
+              <label for="bolusInput">Bolus Insulin (Units)</label>
+              <input type="number" id="bolusInput" step="0.5" min="0" max="100" placeholder="Rapid-acting (e.g. 4.5)">
+            </div>
+
+            <div class="form-group flex-1">
+              <label for="basalInput">Basal Insulin (Units)</label>
+              <input type="number" id="basalInput" step="0.5" min="0" max="100" placeholder="Long-acting (e.g. 18)">
+            </div>
+          </div>
+
+          <!-- Type 2 Specific & General Inputs -->
+          <div class="form-section-title">
+            <span>Type 2 Care & Notes</span>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="medicationInput">Oral Medication / Notes</label>
+              <input type="text" id="medicationInput" placeholder="e.g. Metformin 500mg, 30m Walk">
+            </div>
+
+            <div class="form-group flex-1">
+              <label for="activitySelect">Physical Activity</label>
+              <select id="activitySelect">
+                <option value="None">None / Sedentary</option>
+                <option value="Light">Light (Walking, Chores)</option>
+                <option value="Moderate">Moderate (Gym, Cycling)</option>
+                <option value="Intense">Intense (Running, Sports)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="timestampInput">Date & Time</label>
+              <input type="datetime-local" id="timestampInput" required>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" id="submitLogBtn" class="primary-btn wide-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Save Glucose Log
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Right Column: Interactive Glucose Trend Canvas Chart -->
+      <section class="card chart-card">
+        <div class="card-header flex-between">
+          <div>
+            <h2>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 3v18h18"></path>
+                <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"></path>
+              </svg>
+              Glucose Trend Chart
+            </h2>
+            <p class="chart-subtitle">Shaded area represents target range (<span id="chartRangeLabel">70 - 180 mg/dL</span>)</p>
+          </div>
+
+          <div class="time-filter-buttons">
+            <button class="filter-btn active" data-days="7">7 Days</button>
+            <button class="filter-btn" data-days="14">14 Days</button>
+            <button class="filter-btn" data-days="30">30 Days</button>
+            <button class="filter-btn" data-days="all">All Time</button>
+          </div>
+        </div>
+
+        <div class="chart-wrapper">
+          <canvas id="glucoseCanvasChart"></canvas>
+          <div id="chartTooltip" class="chart-tooltip hidden"></div>
+        </div>
+
+        <div class="chart-legend">
+          <div class="legend-item">
+            <span class="legend-dot dot-hypo"></span> Hypo (&lt; 70)
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot dot-normal"></span> Target (70 - 180)
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot dot-high"></span> High (181 - 250)
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot dot-hyper"></span> Hyper (&gt; 250)
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Log History Table & Filter Section -->
+    <section class="card table-card">
+      <div class="card-header flex-between flex-wrap">
+        <div>
+          <h2>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+            Glucose History Logs
+          </h2>
+          <span id="logCountBadge" class="count-badge">0 entries</span>
+        </div>
+
+        <div class="table-controls flex-wrap">
+          <div class="search-box">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="searchInput" placeholder="Search notes, meds, context...">
+          </div>
+
+          <select id="filterTimingSelect" class="filter-select">
+            <option value="all">All Timings</option>
+            <option value="Fasting">Fasting</option>
+            <option value="Pre-Meal">Before Meal</option>
+            <option value="Post-Meal">After Meal</option>
+            <option value="Bedtime">Bedtime</option>
+            <option value="Overnight">Overnight</option>
+            <option value="Random">Random</option>
+          </select>
+
+          <button id="loadDemoDataBtn" class="tertiary-btn" title="Load sample dataset for preview">Load Demo Logs</button>
+          <button id="clearAllLogsBtn" class="danger-btn" title="Clear all saved logs">Clear All</button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="logs-table">
+          <thead>
+            <tr>
+              <th>Date & Time</th>
+              <th>Glucose</th>
+              <th>Timing Context</th>
+              <th>Carbs (g)</th>
+              <th>Insulin (U)</th>
+              <th>Notes / Medication</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="logsTableBody">
+            <!-- Dynamically populated via JS -->
+          </tbody>
+        </table>
+        <div id="emptyTableState" class="empty-state">
+          <div class="empty-icon">🩸</div>
+          <h3>No Glucose Logs Recorded Yet</h3>
+          <p>Start by filling out the log form above or click "Load Demo Logs" to explore features!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>GlucoPulse Diabetes Companion &bull; Built with standard HTML, CSS &amp; JavaScript &bull; Data stored locally in browser localStorage</p>
+      <p class="disclaimer">Medical Disclaimer: This app is for informational tracking purposes only. Consult your endocrinologist or medical provider for personal insulin dosing or medical guidance.</p>
+    </footer>
+  </div>
+
+  <!-- Settings Modal (Target Thresholds) -->
+  <div id="settingsModal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Target Range Settings</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-intro">Customize target blood sugar thresholds according to your doctor's recommendations.</p>
+        <form id="settingsForm">
+          <div class="form-group">
+            <label for="setHypoLimit">Hypoglycemia (Low) Limit (<span class="unit-text">mg/dL</span>)</label>
+            <input type="number" id="setHypoLimit" step="0.1" min="0.5" max="500" required>
+            <span class="input-help">Readings below this trigger emergency guidance.</span>
+          </div>
+
+          <div class="form-group">
+            <label for="setTargetLow">Target Range Minimum (<span class="unit-text">mg/dL</span>)</label>
+            <input type="number" id="setTargetLow" step="0.1" min="0.5" max="500" required>
+          </div>
+
+          <div class="form-group">
+            <label for="setTargetHigh">Target Range Maximum (<span class="unit-text">mg/dL</span>)</label>
+            <input type="number" id="setTargetHigh" step="0.1" min="0.5" max="500" required>
+          </div>
+
+          <div class="form-group">
+            <label for="setHyperLimit">Hyperglycemia (Very High) Limit (<span class="unit-text">mg/dL</span>)</label>
+            <input type="number" id="setHyperLimit" step="0.1" min="0.5" max="600" required>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="secondary-btn modal-cancel">Cancel</button>
+            <button type="submit" class="primary-btn">Save Settings</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export / Import Modal -->
+  <div id="exportModal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Data Management (Backup &amp; Export)</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="data-option-box">
+          <h4>Export Logs to CSV</h4>
+          <p>Download your complete reading history formatted as a CSV file to share with your physician or endocrinologist.</p>
+          <button id="exportCsvBtn" class="primary-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Export to CSV
+          </button>
+        </div>
+
+        <div class="data-option-box">
+          <h4>Export Data to JSON (Backup)</h4>
+          <p>Save a complete backup file containing all your readings and personalized settings.</p>
+          <button id="exportJsonBtn" class="secondary-btn">Backup JSON File</button>
+        </div>
+
+        <div class="data-option-box">
+          <h4>Restore Data from JSON Backup</h4>
+          <p>Select a previously exported JSON backup file to restore your logs.</p>
+          <input type="file" id="importJsonInput" accept=".json" class="file-input">
+          <button id="triggerImportBtn" class="tertiary-btn">Select Backup File</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Log Item Modal -->
+  <div id="editLogModal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Edit Glucose Log</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="editLogForm">
+          <input type="hidden" id="editLogId">
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="editGlucoseInput">Blood Glucose Level *</label>
+              <div class="input-with-addon">
+                <input type="number" id="editGlucoseInput" step="0.1" required>
+                <span id="editUnitLabel" class="addon">mg/dL</span>
+              </div>
+            </div>
+            <div class="form-group flex-1">
+              <label for="editTimingSelect">Timing / Context *</label>
+              <select id="editTimingSelect" required>
+                <option value="Fasting">Fasting</option>
+                <option value="Pre-Meal">Before Meal</option>
+                <option value="Post-Meal">2h After Meal</option>
+                <option value="Bedtime">Bedtime</option>
+                <option value="Overnight">Overnight</option>
+                <option value="Random">Random</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="editCarbsInput">Carbs (g)</label>
+              <input type="number" id="editCarbsInput" min="0">
+            </div>
+            <div class="form-group flex-1">
+              <label for="editBolusInput">Bolus Insulin (U)</label>
+              <input type="number" id="editBolusInput" step="0.5">
+            </div>
+            <div class="form-group flex-1">
+              <label for="editBasalInput">Basal Insulin (U)</label>
+              <input type="number" id="editBasalInput" step="0.5">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="editMedicationInput">Notes &amp; Medication</label>
+            <input type="text" id="editMedicationInput">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="editActivitySelect">Physical Activity</label>
+              <select id="editActivitySelect">
+                <option value="None">None</option>
+                <option value="Light">Light</option>
+                <option value="Moderate">Moderate</option>
+                <option value="Intense">Intense</option>
+              </select>
+            </div>
+            <div class="form-group flex-1">
+              <label for="editTimestampInput">Date &amp; Time</label>
+              <input type="datetime-local" id="editTimestampInput" required>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="secondary-btn modal-cancel">Cancel</button>
+            <button type="submit" class="primary-btn">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
