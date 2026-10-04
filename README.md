@@ -6,6 +6,7 @@ GlucoPulse is a modern, responsive, and feature-rich blood sugar monitoring appl
 
 **Live app:** https://gluco-pulse.vercel.app/
 
+![GlucoPulse dashboard](screenshots/glucose_logs.png)
 ---
 
 Built entirely with standard **HTML5**, **Vanilla CSS**, and **ES6 JavaScript**, it provides real-time glucose tracking, insulin and carbohydrate counting, medication logs, A1C estimations, Time-in-Range (TIR %) visual metrics, and interactive canvas analytics — storing all patient data securely and persistently in browser `localStorage`.
